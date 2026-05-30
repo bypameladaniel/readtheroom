@@ -12,5 +12,5 @@ with QUESTIONS_FILE.open("r", encoding="utf-8") as file:
 
 
 @router.get("")
-def get_questions() -> list[dict]:
-    return QUESTIONS
+def get_questions() -> list[str]:
+    return [question["question"] for question in QUESTIONS]

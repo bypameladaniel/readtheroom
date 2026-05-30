@@ -1,7 +1,7 @@
-<script setup>
-import QuestionsPage from './pages/QuestionsPage.vue'
-</script>
+HTML
 
 <template>
-  <QuestionsPage />
+  <div class="min-h-screen">
+    <router-view />
+  </div>
 </template>
