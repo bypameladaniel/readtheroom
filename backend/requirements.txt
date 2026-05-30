@@ -13,7 +13,9 @@ fastapi-cloud-cli==0.18.0
 fastar==0.11.0
 h11==0.16.0
 httpcore==1.0.9
-httptools==0.8.0
+httptools==0.8.0python -m venv .venv
+source .venv/bin/activate  # Or .venv\Scripts\activate on Windows
+pip install -r requirements.txt
 httpx==0.28.1
 idna==3.17
 Jinja2==3.1.6

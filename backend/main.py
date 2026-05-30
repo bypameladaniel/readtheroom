@@ -8,11 +8,15 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 
+from controllers.questions_controller import router as questions_router
+
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = FastAPI()
+
+app.include_router(questions_router)
 
 app.add_middleware(
     CORSMiddleware,

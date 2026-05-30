@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "question": "Tell me about a time when you had to work with a difficult coworker. How did you handle the situation?",
+    "expected_answer_points": [
+      "The candidate describes a specific, professional conflict without badmouthing the coworker.",
+      "They demonstrate empathy by trying to understand the coworker's perspective or underlying motivations.",
+      "They take proactive, constructive steps to communicate openly and resolve the issue directly.",
+      "The outcome highlights a improved working relationship, successful project delivery, or a key lesson learned."
+    ]
+  },
+  {
+    "id": 2,
+    "question": "Describe a major mistake you made at work and how you managed the aftermath.",
+    "expected_answer_points": [
+      "The candidate takes clear, upfront ownership of the mistake without shifting blame to others.",
+      "They act quickly to mitigate the damage, informing relevant stakeholders and offering solutions.",
+      "They explain the specific steps taken to correct the error and get the project back on track.",
+      "They share a concrete takeaway or process improvement implemented to ensure the mistake never happens again."
+    ]
+  },
+  {
+    "id": 3,
+    "question": "Give me an example of a time when you had to manage multiple competing priorities under a tight deadline.",
+    "expected_answer_points": [
+      "The candidate outlines a specific frameworks or logic they used to evaluate task urgency and importance.",
+      "They communicate early with stakeholders or managers regarding realistic timelines and potential blockers.",
+      "They showcase organizational skills, such as time-blocking, delegation, or utilizing project management tools.",
+      "The outcome demonstrates that deliverables were met on time without sacrificing quality."
+    ]
+  },
+  {
+    "id": 4,
+    "question": "Can you share a story about a time when you successfully persuaded someone to see your point of view?",
+    "expected_answer_points": [
+      "The candidate relies on data, evidence, and logical reasoning rather than emotional arguments.",
+      "They actively listen to the other party's objections and validate their concerns first.",
+      "They align their proposal with the other person's or the company's shared goals.",
+      "The result shows a collaborative agreement where both parties felt respected and aligned."
+    ]
+  },
+  {
+    "id": 5,
+    "question": "Tell me about a time when a project's requirements suddenly changed mid-way through. How did you adapt?",
+    "expected_answer_points": [
+      "The candidate maintains a calm, adaptable attitude instead of reacting with frustration.",
+      "They quickly reassess current assets, timelines, and resources to pivot efficiently.",
+      "They communicate the changes transparently to team members and align everyone on the new direction.",
+      "The project is completed successfully, proving the candidate's resilience in a fast-paced environment."
+    ]
+  },
+  {
+    "id": 6,
+    "question": "Describe a time when you went above and beyond what was expected of you for a project or client.",
+    "expected_answer_points": [
+      "The candidate identifies a distinct gap, hidden issue, or unique customer need that wasn't explicitly in their job description.",
+      "They demonstrate internal motivation and initiative by taking action without needing to be asked.",
+      "They invest extra effort, creativity, or resources to deliver an exceptional result.",
+      "The outcome shows a highly satisfied client, a significant boost in team performance, or a lasting positive impact on the business."
+    ]
+  },
+  {
+    "id": 7,
+    "question": "Tell me about a time when you had to make an important decision without all the data you needed. How did you proceed?",
+    "expected_answer_points": [
+      "The candidate acknowledges the ambiguity and assesses the risks of waiting versus moving forward.",
+      "They rely on a mix of available proxy data, past experience, and consultation with experts to form a hypothesis.",
+      "They make a decisive choice rather than getting paralyzed by a lack of information.",
+      "They build in a feedback loop or backup plan to pivot quickly if new data proves them wrong."
+    ]
+  },
+  {
+    "id": 8,
+    "question": "Give me an example of a time when you failed to achieve a goal. What happened and what did you learn?",
+    "expected_answer_points": [
+      "The candidate defines a genuine, ambitious goal that was missed, rather than sharing a masked success.",
+      "They objectively analyze the root causes of the failure, balancing external factors with their own missteps.",
+      "They show resilience and a growth mindset by focusing heavily on the lessons extracted from the experience.",
+      "They explain how they applied those exact lessons to a subsequent project to achieve a successful outcome."
+    ]
+  },
+  {
+    "id": 9,
+    "question": "Describe a situation where you had to motivate a disengaged team member or colleague. What approach did you take?",
+    "expected_answer_points": [
+      "The candidate takes the time to connect individually to understand the root cause of the disengagement (e.g., burnout, lack of clarity, personal issues).",
+      "They avoid assumptions or judgment, leading the conversation with curiosity and empathy.",
+      "They align the individual's personal strengths or career goals with the project tasks to rebuild interest.",
+      "The outcome shows a measurable improvement in the colleague's morale, participation, and output."
+    ]
+  },
+  {
+    "id": 10,
+    "question": "Tell me about a time when you received constructive criticism that was difficult to hear. How did you handle it?",
+    "expected_answer_points": [
+      "The candidate manages their initial emotional reaction, listening objectively without becoming defensive.",
+      "They ask clarifying questions or seek specific examples to fully understand the feedback.",
+      "They actively create an action plan or change their behavior based on the critique.",
+      "They follow up later with the person who gave the feedback to show progress and validate the improvement."
+    ]
+  }
+]
