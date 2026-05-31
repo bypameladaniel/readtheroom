@@ -17,7 +17,7 @@ const questions = ref([
 
 const selectedQuestion = ref("Describe a challenge you overcame")
 const currentStep = ref(1)
-const totalSteps = ref(3)
+const totalSteps = ref(4)
 
 function selectQuestion(question) {
   selectedQuestion.value = question
@@ -31,7 +31,7 @@ function pickRandomQuestion() {
 function continueWithQuestion() {
   // Navigate to camera room with selected question
   console.log("Selected question:", selectedQuestion.value)
-  router.push({ path: '/interview', query: { question: selectedQuestion.value } })
+  router.push({ path: '/role', query: { question: selectedQuestion.value } })
 }
 </script>
 

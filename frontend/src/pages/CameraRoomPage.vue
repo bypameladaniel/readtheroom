@@ -25,8 +25,8 @@ const isRecording = ref(false)
 const isUploading = ref(false)
 const videoElement = ref(null)
 const isAudioPlaying = ref(false)
-const currentStep = ref(2)
-const totalSteps = ref(3)
+const currentStep = ref(3)
+const totalSteps = ref(4)
 const showTips = ref(false)
 
 let mediaStream = null

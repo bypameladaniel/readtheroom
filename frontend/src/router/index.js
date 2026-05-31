@@ -1,36 +1,41 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import LandingPage from '../pages/LandingPage.vue'
-import QuestionsPage from '../pages/QuestionsPage.vue'
-import CameraRoomPage from '../pages/CameraRoomPage.vue'
-import FeedbackPage from '../pages/FeedbackPage.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import LandingPage from "../pages/LandingPage.vue";
+import QuestionsPage from "../pages/QuestionsPage.vue";
+import CameraRoomPage from "../pages/CameraRoomPage.vue";
+import FeedbackPage from "../pages/FeedbackPage.vue";
+import TargetRolePage from "@/pages/TargetRolePage.vue";
 
 const routes = [
-  { 
-    path: '/', 
-    component: LandingPage 
-  },
-  { 
-    path: '/questions', 
-    component: QuestionsPage 
-  },
-  { 
-    path: '/interview', 
-    component: CameraRoomPage 
+  {
+    path: "/",
+    component: LandingPage,
   },
   {
-    path: '/feedback',
+    path: "/questions",
+    component: QuestionsPage,
+  },
+  {
+    path: "/role",
+    component: TargetRolePage,
+  },
+  {
+    path: "/interview",
+    component: CameraRoomPage,
+  },
+  {
+    path: "/feedback",
     component: FeedbackPage,
   },
   // Fallback: Redirect anything else to /
-  { 
-    path: '/:pathMatch(.*)*', 
-    redirect: '/' 
-  }
-]
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/",
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

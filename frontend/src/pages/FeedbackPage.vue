@@ -9,8 +9,8 @@ const analysis = ref(null)
 const expressionsAnalysis = ref(null)
 const error = ref('')
 
-const currentStep = ref(3)
-const totalSteps = ref(3)
+const currentStep = ref(4)
+const totalSteps = ref(4)
 
 // Keep track of the interval ID so we can stop it
 let pollInterval = null
