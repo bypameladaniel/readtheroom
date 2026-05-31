@@ -137,7 +137,7 @@ onUnmounted(() => {
                     <span>Conciseness</span>
                     <span class="text-blue-600">{{ analysis?.conciseness_score || 0 }}/10</span>
                   </div>
-                  <Progress :model-value="(analysis?.conciseness_score || 0)" class="h-2.5 bg-gray-200 [&>div]:bg-blue-500 rounded-full" />
+                  <Progress :model-value="(analysis?.conciseness_score * 10|| 0)" class="h-2.5 bg-gray-200 [&>div]:bg-blue-500 rounded-full" />
                 </div>
               </CardContent>
             </Card>
