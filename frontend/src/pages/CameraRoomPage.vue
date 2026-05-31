@@ -173,10 +173,10 @@ async function uploadRecording() {
   formData.append('question', interviewQuestion.value)
   formData.append('role', interviewRole.value)
 
-  console.log('Sending request to:', `${apiBaseUrl}/questions/analyze-complete`)
+  console.log('Sending request to:', `${apiBaseUrl}/analyze-complete`)
 
   try {
-    const response = await fetch(`${apiBaseUrl}/questions/analyze-complete`, {
+    const response = await fetch(`${apiBaseUrl}/analyze-complete`, {
       method: 'POST',
       body: formData,
     })
