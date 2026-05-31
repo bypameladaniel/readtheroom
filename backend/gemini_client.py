@@ -130,7 +130,6 @@ def generate_expression_feedback(
     """
  
     # Serialise aggregation to a clean JSON string for the prompt
-    print(type(agg), agg)
 
     expression_data = json.dumps(agg if isinstance(agg, dict) else asdict(agg), indent=2, cls=_FloatEncoder)
  

@@ -154,11 +154,9 @@ async function uploadRecording() {
   if (!mediaRecorder) return
   isUploading.value = true
   interviewStage.value = 'uploading'
-  
-  console.log('Stopping recorder...')
+
   mediaRecorder.stop()
 
-  // Wait for the recorder to stop with a timeout fallback
   await new Promise((resolve) => {
     const timeout = setTimeout(resolve, 2000)
     mediaRecorder.onstop = () => {
@@ -173,21 +171,31 @@ async function uploadRecording() {
   formData.append('question', interviewQuestion.value)
   formData.append('role', interviewRole.value)
 
-  console.log('Sending request to:', `${apiBaseUrl}/analyze-complete`)
-
-  try {
-    const response = await fetch(`${apiBaseUrl}/analyze-complete`, {
-      method: 'POST',
-      body: formData,
-    })
-
+  // Helper to POST and save result to localStorage under a given key
+  const postAndStore = async (url, key) => {
+    const response = await fetch(url, { method: 'POST', body: formData })
     if (!response.ok) throw new Error(`Server returned ${response.status}`)
-    // try to read JSON reply and persist it for the feedback page
     const data = await response.json().catch(() => null)
     if (data) {
-      try { localStorage.setItem('lastAnalysis', JSON.stringify(data)) } catch (e) { console.warn('Could not save analysis to localStorage', e) }
+      try { localStorage.setItem(key, JSON.stringify(data)) } catch (e) { console.warn(`Could not save ${key} to localStorage`, e) }
     }
+    return data
+  }
+
+  try {
+    localStorage.removeItem('lastAnalysis')
+    localStorage.removeItem('expressionsAnalysis')
+
+    const audioPromise = postAndStore(`${apiBaseUrl}/questions/analyze-interview`, 'lastAnalysis')
+    const expressionsPromise = postAndStore(`${apiBaseUrl}/analyze/expressions`, 'expressionsAnalysis')
+
+    await audioPromise
     router.push('/feedback')
+
+    expressionsPromise.catch((error) => {
+      console.error('Background request failed:', error)
+    })
+
   } catch (error) {
     recordingError.value = 'Upload failed: ' + error.message
     console.error('Upload Error:', error)
