@@ -85,7 +85,7 @@ onUnmounted(() => {
           </div>
         </div>
   </header>
-  
+
   <main class="flex min-h-screen flex-col items-center bg-gray-50 px-4 sm:px-6 py-12 text-gray-900">
     <div class="w-full max-w-5xl space-y-8">
       <!-- Header with Step Indicator -->
@@ -129,7 +129,7 @@ onUnmounted(() => {
               </CardHeader>
               <CardContent class="flex flex-col items-center pt-8 pb-6">
                 <div class="text-6xl font-extrabold text-blue-600 tracking-tighter drop-shadow-sm">
-                  {{ analysis?.relevance_score !== undefined ? analysis.relevance_score * 10 : '--' }}<span class="text-3xl text-blue-300">/10</span>
+                  {{ analysis?.relevance_score !== undefined ? analysis.relevance_score : '--' }}<span class="text-3xl text-blue-300">/10</span>
                 </div>
                 <p class="text-sm font-medium text-gray-600 mt-3 uppercase tracking-wider">Relevance Score</p>
                 <div class="w-full mt-8 space-y-2 max-w-[80%]">
@@ -137,7 +137,7 @@ onUnmounted(() => {
                     <span>Conciseness</span>
                     <span class="text-blue-600">{{ analysis?.conciseness_score || 0 }}/10</span>
                   </div>
-                  <Progress :model-value="(analysis?.conciseness_score || 0) * 10" class="h-2.5 bg-gray-200 [&>div]:bg-blue-500 rounded-full" />
+                  <Progress :model-value="(analysis?.conciseness_score || 0)" class="h-2.5 bg-gray-200 [&>div]:bg-blue-500 rounded-full" />
                 </div>
               </CardContent>
             </Card>
@@ -150,11 +150,11 @@ onUnmounted(() => {
               </CardHeader>
               <CardContent class="flex flex-col items-center pt-8 pb-6" v-if="expressionsAnalysis?.overall_score !== undefined">
                 <div class="text-6xl font-extrabold text-green-600 tracking-tighter drop-shadow-sm flex items-baseline">
-                  {{ expressionsAnalysis.overall_score }}<span class="text-3xl text-green-300">%</span>
+                  {{ expressionsAnalysis.overall_score * 10}}<span class="text-3xl text-green-300">%</span>
                 </div>
                 <p class="text-sm font-medium text-gray-600 mt-3 uppercase tracking-wider">Overall Engagement</p>
                 <div class="w-full mt-8 space-y-2 max-w-[80%]">
-                  <Progress :model-value="expressionsAnalysis.overall_score" class="h-2.5 bg-gray-200 [&>div]:bg-green-500 rounded-full" />
+                  <Progress :model-value="(expressionsAnalysis.overall_score * 10)" class="h-2.5 bg-gray-200 [&>div]:bg-green-500 rounded-full" />
                 </div>
               </CardContent>
               <CardContent v-else class="flex flex-col items-center justify-center pt-14 pb-12 opacity-80">
