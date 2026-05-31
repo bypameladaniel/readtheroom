@@ -31,7 +31,7 @@ function pickRandomQuestion() {
 function continueWithQuestion() {
   // Navigate to camera room with selected question
   console.log("Selected question:", selectedQuestion.value)
-  router.push('/interview')
+  router.push({ path: '/interview', query: { question: selectedQuestion.value } })
 }
 </script>
 
