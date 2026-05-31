@@ -56,3 +56,45 @@ def get_audio_metrics(video: UploadFile = File(...)):
             "status": "error",
             "error": str(e),
         }
+
+
+@app.post("/analyze-complete")
+def analyze_complete(
+    video: UploadFile = File(...),
+    question: str = Form(...),
+    role: str = Form("General job interview"),
+):
+    """Complete analysis: audio metrics + LLM interview analysis combined"""
+    try:
+        # Step 1: Extract transcript and audio
+        transcript_data = video_to_transcript(video)
+        audio_path = Path(transcript_data["audio_path"])
+        transcript = transcript_data["transcript"]
+        
+        # Step 2: Get audio metrics
+        audio_metrics = analyze_audio_metrics(
+            audio_path=audio_path,
+            transcript=transcript,
+        )
+        
+        # Step 3: Get LLM analysis
+        llm_analysis = analyze_answer(
+            question=question,
+            transcript=transcript,
+            role=role,
+        )
+        
+        return {
+            "status": "success",
+            "job_id": transcript_data["job_id"],
+            "question": question,
+            "role": role,
+            "transcript": transcript,
+            "audio_metrics": audio_metrics,
+            "interview_analysis": llm_analysis,
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+        }
