@@ -1,10 +1,12 @@
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from controllers.questions_controller import router as questions_router
 from pathlib import Path
 
 from gemini_client import analyze_answer
 from media_pipeline import video_to_transcript
 from audio_analysis import analyze_audio_metrics
+
 
 app = FastAPI(title="ReadTheRoom API")
 
@@ -15,6 +17,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(questions_router)
 
 
 @app.get("/")
