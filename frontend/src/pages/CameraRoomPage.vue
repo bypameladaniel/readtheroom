@@ -253,7 +253,7 @@ onBeforeUnmount(() => {
     <main class="p-8">
       <div class="mx-auto max-w-5xl space-y-8">
         <!-- Question Card at Top -->
-        <Card>
+        <Card class="py-2">
           <CardContent class="p-3">
             <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Your question</h3>
             <p class="text-lg font-bold text-gray-900">{{ interviewQuestion }}</p>
