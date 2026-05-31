@@ -24,6 +24,7 @@ const interviewStage = ref('ready-to-listen')
 const isRecording = ref(false)
 const isUploading = ref(false)
 const videoElement = ref(null)
+const isAudioPlaying = ref(false)
 
 let mediaStream = null
 let mediaRecorder = null
@@ -85,6 +86,7 @@ function cleanupQuestionAudio() {
     URL.revokeObjectURL(questionAudioObjectUrl)
     questionAudioObjectUrl = null
   }
+  isAudioPlaying.value = false
 }
 
 async function readQuestion() {
@@ -106,9 +108,19 @@ async function readQuestion() {
     questionAudio = new Audio(questionAudioObjectUrl)
 
     await new Promise((resolve, reject) => {
-      questionAudio.onended = resolve
-      questionAudio.onerror = () => reject(new Error('Could not play the question audio.'))
-      questionAudio.play().catch(reject)
+      isAudioPlaying.value = true
+      questionAudio.onended = () => {
+        isAudioPlaying.value = false
+        resolve()
+      }
+      questionAudio.onerror = () => {
+        isAudioPlaying.value = false
+        reject(new Error('Could not play the question audio.'))
+      }
+      questionAudio.play().catch(err => {
+        isAudioPlaying.value = false
+        reject(err)
+      })
     })
 
     interviewStage.value = 'ready-to-record'
@@ -161,10 +173,10 @@ async function uploadRecording() {
   formData.append('question', interviewQuestion.value)
   formData.append('role', interviewRole.value)
 
-  console.log('Sending request to:', `${apiBaseUrl}/questions/analyze-interview`)
+  console.log('Sending request to:', `${apiBaseUrl}/questions/analyze-complete`)
 
   try {
-    const response = await fetch(`${apiBaseUrl}/questions/analyze-interview`, {
+    const response = await fetch(`${apiBaseUrl}/questions/analyze-complete`, {
       method: 'POST',
       body: formData,
     })
@@ -213,13 +225,59 @@ onBeforeUnmount(() => {
 
 <template>
   <main class="min-h-screen bg-[#06111e] text-slate-100 p-8">
-    <video ref="videoElement" autoplay muted playsinline class="w-full max-w-2xl mx-auto rounded-lg shadow-xl" />
-    <div class="mt-8 text-center">
-      <Button @click="handleActionClick" :disabled="isUploading || interviewStage === 'reading-question'" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-full">
-        {{ actionLabel }}
-      </Button>
-      <p class="mt-4 text-rose-400">{{ recordingError }}</p>
-      <p class="mt-2 text-slate-400">{{ actionMessage }}</p>
+    <div class="flex flex-col md:flex-row gap-6 items-start justify-center max-w-5xl mx-auto">
+      <div class="w-full md:w-2/3">
+        <video ref="videoElement" autoplay muted playsinline class="w-full rounded-lg shadow-xl" />
+      </div>
+
+      <aside class="w-full md:w-1/3">
+        <Card>
+          <CardContent class="p-6 flex flex-col items-center gap-4">
+            <div class="w-48 h-48 flex items-center justify-center">
+              <div :class="['shape', isAudioPlaying ? 'playing' : 'idle']" aria-hidden="true"></div>
+            </div>
+            <div class="mt-4 w-full text-center">
+              <Button @click="handleActionClick" :disabled="isUploading || interviewStage === 'reading-question'" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full">
+                {{ actionLabel }}
+              </Button>
+            </div>
+            <p class="mt-3 text-rose-400">{{ recordingError }}</p>
+            <p class="mt-2 text-slate-400 text-center">{{ actionMessage }}</p>
+          </CardContent>
+        </Card>
+      </aside>
     </div>
   </main>
 </template>
+
+<style scoped>
+.shape {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #7dd3fc 0%, #60a5fa 50%, #a78bfa 100%);
+  transition: all 400ms cubic-bezier(.2,.9,.2,1);
+  will-change: border-radius, transform, clip-path;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+}
+.shape.idle {
+  border-radius: 16px;
+  transform: rotate(0deg) scale(1);
+  clip-path: polygon(10% 10%, 90% 10%, 90% 90%, 10% 90%);
+}
+.shape.playing {
+  border-radius: 9999px;
+  transform: rotate(12deg) scale(1.08);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* subtle pulsing while playing */
+.shape.playing {
+  animation: pulse 900ms ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { transform: rotate(12deg) scale(1.03); }
+  50% { transform: rotate(12deg) scale(1.12); }
+  100% { transform: rotate(12deg) scale(1.03); }
+}
+</style>
