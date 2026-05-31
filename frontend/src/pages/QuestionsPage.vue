@@ -17,7 +17,7 @@ const questions = ref([
 
 const selectedQuestion = ref("Describe a challenge you overcame")
 const currentStep = ref(1)
-const totalSteps = ref(4)
+const totalSteps = ref(3)
 
 function selectQuestion(question) {
   selectedQuestion.value = question
@@ -43,14 +43,13 @@ function continueWithQuestion() {
         <h1 class="text-2xl font-bold text-gray-900">ReadTheRoom</h1>
         <div class="flex items-center gap-3">
           <div class="flex gap-2">
-            <button
+            <div
               v-for="step in totalSteps"
               :key="step"
               :class="[
                 'h-3 w-3 rounded-full transition-colors',
                 step <= currentStep ? 'bg-blue-500' : 'bg-gray-300',
               ]"
-              @click="currentStep = step"
             />
           </div>
           <span class="text-sm text-gray-600 font-medium">

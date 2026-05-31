@@ -25,6 +25,9 @@ const isRecording = ref(false)
 const isUploading = ref(false)
 const videoElement = ref(null)
 const isAudioPlaying = ref(false)
+const currentStep = ref(2)
+const totalSteps = ref(3)
+const showTips = ref(false)
 
 let mediaStream = null
 let mediaRecorder = null
@@ -232,30 +235,111 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#06111e] text-slate-100 p-8">
-    <div class="flex flex-col md:flex-row gap-6 items-start justify-center max-w-5xl mx-auto">
-      <div class="w-full md:w-2/3">
-        <video ref="videoElement" autoplay muted playsinline class="w-full rounded-lg shadow-xl" />
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header with Step Indicator -->
+    <header class="border-b border-gray-200 bg-white px-6 py-4">
+      <div class="mx-auto flex max-w-5xl items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">ReadTheRoom</h1>
+        <div class="flex items-center gap-3">
+          <div class="flex gap-2">
+            <button
+              v-for="step in totalSteps"
+              :key="step"
+              :class="[
+                'h-3 w-3 rounded-full transition-colors',
+                step <= currentStep ? 'bg-blue-500' : 'bg-gray-300',
+              ]"
+            />
+          </div>
+          <span class="text-sm text-gray-600 font-medium">
+            Step {{ currentStep }} of {{ totalSteps }}
+          </span>
+        </div>
       </div>
+    </header>
 
-      <aside class="w-full md:w-1/3">
-        <Card>
-          <CardContent class="p-6 flex flex-col items-center gap-4">
-            <div class="w-48 h-48 flex items-center justify-center">
-              <div :class="['shape', isAudioPlaying ? 'playing' : 'idle']" aria-hidden="true"></div>
-            </div>
-            <div class="mt-4 w-full text-center">
-              <Button @click="handleActionClick" :disabled="isUploading || interviewStage === 'reading-question'" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full">
-                {{ actionLabel }}
-              </Button>
-            </div>
-            <p class="mt-3 text-rose-400">{{ recordingError }}</p>
-            <p class="mt-2 text-slate-400 text-center">{{ actionMessage }}</p>
+    <main class="p-8">
+      <div class="mx-auto max-w-5xl space-y-8">
+        <!-- Question Card at Top -->
+        <Card class="py-2">
+          <CardContent class="p-3">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Your question</h3>
+            <p class="text-lg font-bold text-gray-900">{{ interviewQuestion }}</p>
           </CardContent>
         </Card>
-      </aside>
-    </div>
-  </main>
+
+        <!-- Record Instructions with Tips Button -->
+        <div class="flex items-center justify-between">
+          <p class="text-base text-gray-700">
+            Record yourself answering this on your computer or webcam.
+          </p>
+          <button @click="showTips = true" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
+            View tips
+          </button>
+        </div>
+
+        <!-- Video and Recording Section -->
+        <div class="pt-4">
+          <div class="flex flex-col md:flex-row gap-6 items-start justify-center max-w-5xl">
+            <div class="w-full md:w-2/3">
+              <video ref="videoElement" autoplay muted playsinline class="w-full rounded-lg shadow-xl" />
+            </div>
+
+            <aside class="w-full md:w-1/3">
+              <Card>
+                <CardContent class="p-6 flex flex-col items-center gap-4">
+                  <div class="w-48 h-48 flex items-center justify-center">
+                    <div :class="['shape', isAudioPlaying ? 'playing' : 'idle']" aria-hidden="true"></div>
+                  </div>
+                  <div class="mt-4 w-full text-center">
+                    <Button @click="handleActionClick" :disabled="isUploading || interviewStage === 'reading-question'" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full">
+                      {{ actionLabel }}
+                    </Button>
+                  </div>
+                  <p class="mt-3 text-red-600">{{ recordingError }}</p>
+                  <p class="mt-2 text-gray-600 text-center">{{ actionMessage }}</p>
+                </CardContent>
+              </Card>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Tips Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showTips" class="fixed inset-0 bg-opacity-10 flex items-center justify-center z-50 p-4">
+          <div class="modal-content">
+            <Card class="w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <CardContent class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-semibold text-gray-900">Tips before you record</h3>
+                  <button @click="showTips = false" class="text-gray-400 hover:text-gray-600 text-xl leading-none">
+                    ✕
+                  </button>
+                </div>
+                <ul class="space-y-4">
+                  <li class="flex gap-3">
+                    <span class="text-2xl flex-shrink-0">⏱️</span>
+                    <span class="text-sm text-gray-700"><strong>Aim for 60–90 seconds</strong> — not too short, not a monologue</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-2xl flex-shrink-0">🎤</span>
+                    <span class="text-sm text-gray-700"><strong>Find a quiet spot</strong> — Whisper needs clear audio</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-2xl flex-shrink-0">👁️</span>
+                    <span class="text-sm text-gray-700"><strong>Look at the camera</strong> — speak as you would in a real interview</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+  </div>
 </template>
 
 <style scoped>
@@ -287,5 +371,31 @@ onBeforeUnmount(() => {
   0% { transform: rotate(12deg) scale(1.03); }
   50% { transform: rotate(12deg) scale(1.12); }
   100% { transform: rotate(12deg) scale(1.03); }
+}
+
+/* Modal animations */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-content {
+  animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 </style>
