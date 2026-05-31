@@ -154,9 +154,12 @@ def generate_expression_feedback(
                     # ── Overall impression ─────────────────────────────────
                     "overall_score": {
                         "type": "INTEGER",
+                        "minimum": 1,
+                        "maximum": 10,
                     },
                     "overall_summary": {
                         "type": "STRING",
+                        "description": "A high-level summary of the interview performance. Must be exactly 2-3 sentences long.",
                     },
  
                     # ── Emotional arc ──────────────────────────────────────
