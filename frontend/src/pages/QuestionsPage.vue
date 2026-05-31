@@ -17,7 +17,7 @@ const questions = ref([
 
 const selectedQuestion = ref("Describe a challenge you overcame")
 const currentStep = ref(1)
-const totalSteps = ref(4)
+const totalSteps = ref(3)
 
 function selectQuestion(question) {
   selectedQuestion.value = question
