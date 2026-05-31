@@ -9,6 +9,9 @@ const analysis = ref(null)
 const expressionsAnalysis = ref(null)
 const error = ref('')
 
+const currentStep = ref(3)
+const totalSteps = ref(3)
+
 // Keep track of the interval ID so we can stop it
 let pollInterval = null
 
@@ -62,8 +65,30 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <header class="border-b border-gray-200 bg-white px-6 py-4">
+        <div class="mx-auto flex max-w-5xl items-center justify-between">
+          <h1 class="text-2xl font-bold text-gray-900">ReadTheRoom</h1>
+          <div class="flex items-center gap-3">
+            <div class="flex gap-2">
+              <div
+                v-for="step in totalSteps"
+                :key="step"
+                :class="[
+                  'h-3 w-3 rounded-full transition-colors',
+                  step <= currentStep ? 'bg-blue-500' : 'bg-gray-300',
+                ]"
+              />
+            </div>
+            <span class="text-sm text-gray-600 font-medium">
+              Step {{ currentStep }} of {{ totalSteps }}
+            </span>
+          </div>
+        </div>
+  </header>
+  
   <main class="flex min-h-screen flex-col items-center bg-gray-50 px-4 sm:px-6 py-12 text-gray-900">
     <div class="w-full max-w-5xl space-y-8">
+      <!-- Header with Step Indicator -->
       
       <!-- Header -->
       <div class="text-center space-y-4">
