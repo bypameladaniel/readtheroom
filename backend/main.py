@@ -1,8 +1,6 @@
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from backend.gemini_client import analyze_answer
-from media_pipeline import video_to_transcript
+from controllers.questions_controller import router as questions_router
 
 app = FastAPI(title="ReadTheRoom API")
 
@@ -14,17 +12,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-def home():
-    return {"message": "ReadTheRoom backend is running"}
-
-
-@app.post("/analyze-interview")
-def analyze_interview(video: UploadFile = File(...), question: str = Form(...), role: str = Form("General job interview")):
-    transcript_data = video_to_transcript(video)
-    return analyze_answer(
-        question=question,
-        transcript=transcript_data["transcript"],
-        role=role,
-    )
+app.include_router(questions_router)
