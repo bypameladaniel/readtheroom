@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const analysis = ref(null)
+const audioMetrics = ref(null)
 const expressionsAnalysis = ref(null)
 const error = ref('')
 
@@ -43,7 +44,11 @@ const stopPolling = () => {
 onMounted(() => {
   try {
     const raw = localStorage.getItem('lastAnalysis')
-    if (raw) analysis.value = JSON.parse(raw)
+    if (raw) {
+      const data = JSON.parse(raw)
+      analysis.value = data.interview_analysis
+      audioMetrics.value = data.audio_metrics
+    }
     else error.value = 'No server reply found.'
   } catch (e) {
     console.error(e)
@@ -259,7 +264,7 @@ onUnmounted(() => {
           </Card>
 
           <!-- Filler Words -->
-          <Card class="bg-white border-gray-200 shadow-xl" v-if="analysis?.filler_words !== undefined">
+          <Card class="bg-white border-gray-200 shadow-xl" v-if="audioMetrics?.filler_breakdown !== undefined">
             <CardContent class="p-6">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -269,10 +274,10 @@ onUnmounted(() => {
                   <p class="text-sm text-gray-600 mt-1">Words that distracted from your message</p>
                 </div>
                 <div class="flex flex-wrap gap-2 justify-start sm:justify-end max-w-md">
-                  <Badge v-for="(word, i) in analysis.filler_words" :key="i" variant="destructive" class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 shadow-sm">
-                    {{ word }}
+                  <Badge v-for="(count, word) in audioMetrics.filler_breakdown" :key="word" variant="destructive" class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 shadow-sm">
+                    {{ word }} <span class="ml-1 font-semibold">×{{ count }}</span>
                   </Badge>
-                  <div v-if="analysis.filler_words.length === 0" class="bg-green-100 border border-green-200 text-green-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                  <div v-if="Object.keys(audioMetrics.filler_breakdown).length === 0" class="bg-green-100 border border-green-200 text-green-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
                     Great! No filler words
                   </div>
@@ -280,6 +285,123 @@ onUnmounted(() => {
               </div>
             </CardContent>
           </Card>
+
+          <!-- Audio Metrics Summary -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6" v-if="audioMetrics">
+            <!-- Speaking Pace Card -->
+            <Card class="bg-white border-blue-200 shadow-lg overflow-hidden">
+              <CardHeader class="bg-blue-50 border-b border-blue-200">
+                <CardTitle class="text-blue-700 text-base">Speaking Pace</CardTitle>
+                <CardDescription class="text-blue-600 text-xs">Words per minute</CardDescription>
+              </CardHeader>
+              <CardContent class="pt-6 pb-4">
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-blue-600 mb-2">{{ audioMetrics.words_per_minute }}</div>
+                  <div class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
+                    {{ audioMetrics.pace_label }}
+                  </div>
+                  <p class="text-xs text-gray-600 mt-3">Ideal: 110-160 WPM</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Hedging Phrases Card -->
+            <Card class="bg-white border-orange-200 shadow-lg overflow-hidden">
+              <CardHeader class="bg-orange-50 border-b border-orange-200">
+                <CardTitle class="text-orange-700 text-base">Hedging Phrases</CardTitle>
+                <CardDescription class="text-orange-600 text-xs">Uncertainty indicators</CardDescription>
+              </CardHeader>
+              <CardContent class="pt-6 pb-4">
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-orange-600 mb-2">{{ audioMetrics.hedging_count }}</div>
+                  <p class="text-xs text-gray-600 mb-3">Phrases like "I think", "maybe"</p>
+                  <div class="text-left space-y-1">
+                    <div v-for="(count, phrase) in audioMetrics.hedging_breakdown" :key="phrase" class="text-xs text-gray-700 flex justify-between">
+                      <span class="font-medium">{{ phrase }}</span>
+                      <span class="text-orange-600 font-semibold">{{ count }}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Pauses Card -->
+            <Card class="bg-white border-purple-200 shadow-lg overflow-hidden">
+              <CardHeader class="bg-purple-50 border-b border-purple-200">
+                <CardTitle class="text-purple-700 text-base">Long Pauses</CardTitle>
+                <CardDescription class="text-purple-600 text-xs">Silence 2+ seconds</CardDescription>
+              </CardHeader>
+              <CardContent class="pt-6 pb-4">
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-purple-600 mb-2">{{ audioMetrics.long_pauses }}</div>
+                  <p class="text-xs text-gray-600 mb-3">{{ audioMetrics.pause_label }}</p>
+                  <div v-if="audioMetrics.pause_map && audioMetrics.pause_map.length > 0" class="text-left space-y-1 max-h-24 overflow-y-auto">
+                    <div v-for="(pause, i) in audioMetrics.pause_map.slice(0, 3)" :key="i" class="text-xs text-gray-700">
+                      <span class="font-medium">Pause {{ i + 1 }}:</span> {{ pause.duration }}s
+                    </div>
+                    <div v-if="audioMetrics.pause_map.length > 3" class="text-xs text-gray-500 italic pt-1">
+                      +{{ audioMetrics.pause_map.length - 3 }} more pauses
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Buzzwords Card -->
+            <Card class="bg-white border-green-200 shadow-lg overflow-hidden">
+              <CardHeader class="bg-green-50 border-b border-green-200">
+                <CardTitle class="text-green-700 text-base">Buzzwords</CardTitle>
+                <CardDescription class="text-green-600 text-xs">Common corporate terms</CardDescription>
+              </CardHeader>
+              <CardContent class="pt-6 pb-4">
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-green-600 mb-2">{{ audioMetrics.buzzwords }}</div>
+                  <p class="text-xs text-gray-600 mb-3">Used in your response</p>
+                  <div class="text-left space-y-1">
+                    <div v-for="(count, word) in audioMetrics.buzzword_breakdown" :key="word" class="text-xs text-gray-700 flex justify-between">
+                      <span class="font-medium">{{ word }}</span>
+                      <span class="text-green-600 font-semibold">{{ count }}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Duration & Word Count Card -->
+            <Card class="bg-white border-gray-200 shadow-lg overflow-hidden">
+              <CardHeader class="bg-gray-50 border-b border-gray-200">
+                <CardTitle class="text-gray-700 text-base">Response Stats</CardTitle>
+                <CardDescription class="text-gray-600 text-xs">Duration and word count</CardDescription>
+              </CardHeader>
+              <CardContent class="pt-6 pb-4">
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-600 font-medium">Duration</span>
+                    <span class="text-sm font-bold text-gray-900">{{ audioMetrics.duration_seconds }}s</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-600 font-medium">Word Count</span>
+                    <span class="text-sm font-bold text-gray-900">{{ audioMetrics.word_count }}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Confidence Score Card -->
+            <Card class="bg-white border-blue-200 shadow-lg overflow-hidden">
+              <CardHeader class="bg-blue-50 border-b border-blue-200">
+                <CardTitle class="text-blue-700 text-base">Confidence</CardTitle>
+                <CardDescription class="text-blue-600 text-xs">Overall confidence level</CardDescription>
+              </CardHeader>
+              <CardContent class="pt-6 pb-4">
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-blue-600 mb-2">{{ audioMetrics.confidence_score }}</div>
+                  <Progress :model-value="audioMetrics.confidence_score" class="h-2.5 bg-gray-200 [&>div]:bg-blue-500 rounded-full mt-4" />
+                  <p class="text-xs text-gray-600 mt-3">Based on pace, filler words, pauses</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <!-- EXPRESSIONS TAB -->

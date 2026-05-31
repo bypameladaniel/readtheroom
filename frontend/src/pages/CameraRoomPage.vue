@@ -189,7 +189,7 @@ async function uploadRecording() {
     localStorage.removeItem('lastAnalysis')
     localStorage.removeItem('expressionsAnalysis')
 
-    const audioPromise = postAndStore(`${apiBaseUrl}/questions/analyze-interview`, 'lastAnalysis')
+    const audioPromise = postAndStore(`${apiBaseUrl}/analyze-complete`, 'lastAnalysis')
     const expressionsPromise = postAndStore(`${apiBaseUrl}/analyze/expressions`, 'expressionsAnalysis')
 
     await audioPromise
