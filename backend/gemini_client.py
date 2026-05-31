@@ -55,8 +55,16 @@ def analyze_answer(
             "response_schema": {
                 "type": "OBJECT",
                 "properties": {
-                    "conciseness_score": {"type": "INTEGER"},
-                    "relevance_score": {"type": "INTEGER"},
+                    "conciseness_score": {
+                        "type": "INTEGER",
+                        "minimum": 1,
+                        "maximum": 10,
+                    },
+                    "relevance_score": {
+                        "type": "INTEGER",
+                        "minimum": 1,
+                        "maximum": 10,
+                    },
                     "filler_words": {
                         "type": "ARRAY",
                         "items": {"type": "STRING"}
@@ -159,7 +167,7 @@ def generate_expression_feedback(
                     },
                     "overall_summary": {
                         "type": "STRING",
-                        "description": "A high-level summary of the interview performance. Must be exactly 2-3 sentences long.",
+                        "description": "A high-level summary of the interview performance. Must be exactly 2-3 sentences long. Focus strictly on factual observations of behavior. Do NOT include disclaimers about video data limitations or video length.",
                     },
  
                     # ── Emotional arc ──────────────────────────────────────
