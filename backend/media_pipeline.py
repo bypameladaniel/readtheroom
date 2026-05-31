@@ -96,5 +96,7 @@ def video_to_transcript(video: UploadFile) -> dict:
         "job_id": job_id,
         "video_file": video_path.name,
         "audio_file": audio_path.name,
+        "video_path": str(video_path),
+        "audio_path": str(audio_path),
         "transcript": transcript,
     }

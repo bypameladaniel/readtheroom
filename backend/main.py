@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.questions_controller import router as questions_router
+from pathlib import Path
+
+from gemini_client import analyze_answer
+from media_pipeline import video_to_transcript
+from audio_analysis import analyze_audio_metrics
+
 
 app = FastAPI(title="ReadTheRoom API")
 
@@ -13,3 +19,86 @@ app.add_middleware(
 )
 
 app.include_router(questions_router)
+
+
+@app.get("/")
+def home():
+    return {"message": "ReadTheRoom backend is running"}
+
+
+@app.post("/analyze-interview")
+def analyze_interview(video: UploadFile = File(...), question: str = Form(...), role: str = Form("General job interview")):
+    transcript_data = video_to_transcript(video)
+    return analyze_answer(
+        question=question,
+        transcript=transcript_data["transcript"],
+        role=role,
+    )
+
+
+@app.post("/audio-metrics")
+def get_audio_metrics(video: UploadFile = File(...)):
+    """Extract audio metrics from a video without LLM analysis"""
+    try:
+        transcript_data = video_to_transcript(video)
+        audio_path = Path(transcript_data["audio_path"])
+        transcript = transcript_data["transcript"]
+        
+        metrics = analyze_audio_metrics(
+            audio_path=audio_path,
+            transcript=transcript,
+        )
+        
+        return {
+            "status": "success",
+            "job_id": transcript_data["job_id"],
+            "transcript": transcript,
+            "metrics": metrics,
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+        }
+
+
+@app.post("/analyze-complete")
+def analyze_complete(
+    video: UploadFile = File(...),
+    question: str = Form(...),
+    role: str = Form("General job interview"),
+):
+    """Complete analysis: audio metrics + LLM interview analysis combined"""
+    try:
+        # Step 1: Extract transcript and audio
+        transcript_data = video_to_transcript(video)
+        audio_path = Path(transcript_data["audio_path"])
+        transcript = transcript_data["transcript"]
+        
+        # Step 2: Get audio metrics
+        audio_metrics = analyze_audio_metrics(
+            audio_path=audio_path,
+            transcript=transcript,
+        )
+        
+        # Step 3: Get LLM analysis
+        llm_analysis = analyze_answer(
+            question=question,
+            transcript=transcript,
+            role=role,
+        )
+        
+        return {
+            "status": "success",
+            "job_id": transcript_data["job_id"],
+            "question": question,
+            "role": role,
+            "transcript": transcript,
+            "audio_metrics": audio_metrics,
+            "interview_analysis": llm_analysis,
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+        }
